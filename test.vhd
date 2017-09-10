@@ -12,6 +12,22 @@ end;
 
 architecture arch_test of test is 
 
+  constant master_in : nasti_master_in_type := (
+    aw_ready => '0',
+    w_ready =>  '0',
+    b_valid =>  '0',
+    b_resp =>   (others =>'0'),
+    b_id =>     (others =>'0'),
+    b_user =>   '0',
+    ar_ready => '0',
+    r_valid =>  '0',
+    r_resp =>   (others =>'0'),
+    r_data =>   (others =>'0'),
+    r_last =>   '0',
+    r_id =>     (others =>'0'),
+    r_user =>   '0'
+  );
+
   COMPONENT master
   PORT(
     clk : in std_logic;
@@ -23,7 +39,7 @@ architecture arch_test of test is
 
   -- inputs
   signal clk : std_logic := '0';
-
+  signal mi : nasti_master_in_type := master_in; 
 
   -- outputs
   signal mo : nasti_master_out_type;
@@ -36,6 +52,7 @@ begin
 
   uut : master PORT MAP(
     clk => clk,
+    mi => mi,
     mo => mo,
     cfg => cfg
   );
