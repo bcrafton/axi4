@@ -14,8 +14,8 @@ entity slave is
   ); 
   Port(
     clk : in std_logic;
-    mi : in nasti_slave_in_type;
-    mo : out nasti_slave_out_type;
+    si : in nasti_slave_in_type;
+    so : out nasti_slave_out_type;
     cfg : out nasti_slave_config_type
   );
 
@@ -36,7 +36,7 @@ architecture arch_slave of slave is
 begin  
 
   cfg <= config;
-  mo.aw_ready <= '1';
+  so.aw_ready <= '1';
 
   check_valid : process(clk)
   begin
