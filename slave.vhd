@@ -36,12 +36,33 @@ architecture arch_slave of slave is
 begin  
 
   cfg <= config;
+
   so.aw_ready <= '1';
+  so.w_ready <= '1';
+
+  so.b_valid <= '1';
+  -- so.b_resp <= '0';
+  so.b_id <= conv_std_logic_vector(0, CFG_ROCKET_ID_BITS);
+  so.b_user <= '0';
+
+  so.ar_ready <= '1';
+
+  so.r_valid <= '1';
+  -- so.r_resp <= '0';
+  -- so.r_data <= '0';
+  so.r_last <= '0';
+  so.r_id <= conv_std_logic_vector(0, CFG_ROCKET_ID_BITS);
+  so.r_user <= '0';
 
   check_valid : process(clk)
   begin
     if( rising_edge(clk) ) then
-      report "clock";
+      report std_logic'image(si.aw_valid);
+      report std_logic'image(si.ar_valid);
+      report std_logic'image(si.w_valid);
+      if( si.aw_valid = '1' ) then
+        report "clock";
+      end if;
     end if;
   end process;
 

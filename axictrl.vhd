@@ -267,7 +267,7 @@ begin
   end process;
 
   stimulus : process begin
-      report "hello world";
+      -- report "hello world";
       wait;
   end process;
 

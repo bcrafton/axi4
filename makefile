@@ -1,5 +1,5 @@
 
-all: commonlib utillib ambalib axictrl elaborate run
+all: commonlib utillib ambalib build elaborate run
 
 commonlib: 
 	ghdl -a --work=commonlib types_common.vhd
@@ -10,14 +10,14 @@ utillib:
 ambalib:
 	ghdl -a --work=ambalib types_amba4.vhd
 
-axictrl:
-	ghdl -a axictrl.vhd
+build:
+	ghdl -a test.vhd axictrl.vhd master.vhd slave.vhd
 
 elaborate:
-	ghdl -e axictrl
+	ghdl -e test
 
 run:
-	ghdl -r axictrl
+	ghdl -r test
 
 clean:
 	rm -f *.cf

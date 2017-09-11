@@ -50,6 +50,22 @@ architecture arch_test of test is
     r_ready =>  '0'
   );
 
+  COMPONENT axictrl
+  PORT(
+    i_clk    : in std_logic;
+    i_nrst   : in std_logic;
+    i_slvcfg : in  nasti_slave_cfg_vector;
+    i_slvo   : in  nasti_slaves_out_vector;
+    i_msto   : in  nasti_master_out_vector;
+    o_slvi   : out nasti_slave_in_vector;
+    o_msti   : out nasti_master_in_vector;
+    o_miss_irq  : out std_logic;
+    o_miss_addr : out std_logic_vector(CFG_NASTI_ADDR_BITS-1 downto 0);
+    o_bus_util_w : out std_logic_vector(CFG_NASTI_MASTER_TOTAL-1 downto 0);
+    o_bus_util_r : out std_logic_vector(CFG_NASTI_MASTER_TOTAL-1 downto 0)
+  );
+  END COMPONENT;
+
   COMPONENT master
   PORT(
     clk : in std_logic;
@@ -70,9 +86,17 @@ architecture arch_test of test is
 
   -- inputs
   signal clk : std_logic := '0';
+  --signal mi : nasti_master_in_type := master_in; 
+  --signal si : nasti_slave_in_type := slave_in;
+  signal slv_cfg : nasti_slave_cfg_vector;
+  signal axiso   : nasti_slaves_out_vector;
+  signal aximo   : nasti_master_out_vector;
+  signal axisi   : nasti_slave_in_vector;
+  signal aximi   : nasti_master_in_vector;
 
-  signal mi : nasti_master_in_type := master_in; 
-  signal si : nasti_slave_in_type := slave_in;
+  -- passthrough
+  signal mi : nasti_master_in_type; 
+  signal si : nasti_slave_in_type;
 
   -- outputs
   signal mo : nasti_master_out_type;
@@ -80,10 +104,36 @@ architecture arch_test of test is
   signal mcfg : nasti_master_config_type;
   signal scfg : nasti_slave_config_type;
 
+  signal o_miss_irq  : std_logic;
+  signal o_miss_addr : std_logic_vector(CFG_NASTI_ADDR_BITS-1 downto 0);
+  signal o_bus_util_w : std_logic_vector(CFG_NASTI_MASTER_TOTAL-1 downto 0);
+  signal o_bus_util_r : std_logic_vector(CFG_NASTI_MASTER_TOTAL-1 downto 0);
+
   -- clk period
   constant clk_period : time := 1 us;
 
 begin  
+
+  slv_cfg(0) <= scfg;
+  axiso(0) <= so;
+  aximo(0) <= mo;
+  si <= axisi(0);
+  mi <= aximi(0);
+
+  a_uut : axictrl PORT MAP(
+    i_clk    => clk,
+    i_nrst   => '0',
+
+    i_slvcfg => slv_cfg,
+    i_slvo   => axiso,
+    i_msto   => aximo,
+    o_slvi   => axisi,
+    o_msti   => aximi,
+    o_miss_irq  => o_miss_irq,
+    o_miss_addr => o_miss_addr,
+    o_bus_util_w => o_bus_util_w,
+    o_bus_util_r => o_bus_util_r
+  );
 
   m_uut : master PORT MAP(
     clk => clk,
